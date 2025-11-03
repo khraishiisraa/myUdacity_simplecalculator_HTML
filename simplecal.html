@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آلة حاسبة بسيطة</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background-color: #4b1763;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .calculator {
+      background-color: #eb2abae9;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(151, 86, 127, 0.823);
+      width: 300px;
+      padding: 20px;
+    }
+    .display {
+      background-color: #c8dcdc;
+      color: rgb(2, 39, 14);
+      font-size: 2em;
+      text-align: right;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      overflow-x: auto;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 15px;
+      border: none;
+      border-radius: 8cap;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { 
+      color: hsla(315, 39%, 25%, 0.776);
+    }
+    .equal {
+      background-color: rgba(170, 0, 0, 0.63);
+      color: #010000;
+    }
+    .clear {
+      background-color: rgba(170, 0, 0, 0.63);
+      color: rgb(30, 3, 3);
+    }
+  </style>
+</head>
+<body>
+<!-- اله حاسبة تعرض النتيجة فقط على شاشة العرض وليس العملي الخسابية كاملة -->
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  <div class="buttons">
+    <button onclick="sqrt()">√</button>
+    <button onclick="operation('%')">%</button>
+    <button onclick="operation('/')">÷</button>
+    <button class="clear" onclick="clearDisplay()">C</button>
+    
+    <button onclick="appendNumber('3')">3</button>
+    <button onclick="appendNumber('2')">2</button>
+    <button onclick="appendNumber('1')">1</button>
+    <button onclick="operation('+')">+</button>
+
+    <button onclick="appendNumber('6')">6</button>
+    <button onclick="appendNumber('5')">5</button>
+    <button onclick="appendNumber('4')">4</button>
+    <button onclick="operation('-')">−</button>
+
+    <button onclick="appendNumber('9')">9</button>
+    <button onclick="appendNumber('8')">8</button>
+    <button onclick="appendNumber('7')">7</button>
+    <button onclick="operation('*')">×</button>
+
+    <button onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
+    <button onclick="appendNumber('.')">.</button>
+    <button class="equal" onclick="equal()">=</button>
+  </div>
+</div>
+
+<script>
+  let display = document.getElementById('display');
+  let current = 0;
+  let operator = null;
+  let newInput = true;
+// تحديث الشاشة بالرقم او النتيجةو يتم استدعائه داخل مرارا بالبرنامج
+  function updateDisplay(value) {
+    display.textContent = value;
+  }
+// ادخال الارقام بشكل متتابع احاد عشرات مئات
+  function appendNumber(num) {
+    if (newInput) {
+      display.textContent = num;
+      newInput = false;
+    } else {
+      display.textContent += num;
+    }
+  }
+  function clearDisplay() {
+      currentInput = '0';
+      updateDisplay();
+  }
+
+  function operation(op) {
+    let displayed = parseFloat(display.textContent);
+    if (operator) {
+      // تنفيذ العملية السابقة مباشرة
+      calculate(displayed);
+    } else {
+      current = displayed;
+    }
+    operator = op;
+    newInput = true;
+  }
+// العمليات جمع وطرح وقسمة وضرب وباقي القسمة
+  function calculate(value) {
+   switch(operator) {
+    case '+': current += value; break;
+    case '-': current -= value; break;
+    case '*': current *= value; break;
+    case '/': current /= value; break;
+    case '%': current = current % value; break; 
+  }
+  updateDisplay(current);
+  }
+
+// هنا عرض النتيجة
+  function equal() {
+    let displayed = parseFloat(display.textContent);
+    if (operator) {
+      calculate(displayed);
+      operator = null;
+    }
+    newInput = true;
+  }
+
+  function sqrt() {
+   let displayed = parseFloat(display.textContent);
+
+  // إذا كانت هناك عملية معلقة سابقة ننفذها أولًا
+   if (operator) {
+    calculate(displayed);  // هذا يحدث updateDisplay(current)
+    operator = null;
+    displayed = current;    // الآن displayed = نتيجة العملية السابقة
+   }
+
+   current = Math.sqrt(displayed);
+   updateDisplay(current);
+   newInput = true;
+  }
+
+</script>
+
+</body>
+</html>
